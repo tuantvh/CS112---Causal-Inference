@@ -144,162 +144,7 @@ text(1982.5,1000,"reunification",cex=Cex.set)
 real_gap <- gap
 #dev.off()
 
-#figure 4:
-par(mfrow=c(1,2))
-
-###1975 reunification
-# data prep for training model
-dataprep.out <-
-  dataprep(
-    foo = d,
-    predictors    = c("gdp","trade","infrate"),
-    dependent     = "gdp",
-    unit.variable = 1,
-    time.variable = 3,
-    special.predictors = list(
-      list("industry",1971, c("mean")),
-      list("schooling",c(1960,1965), c("mean")),
-      list("invest60" ,1980, c("mean"))
-    ),
-    treatment.identifier = 7,
-    controls.identifier = unique(d$index)[-7],
-    time.predictors.prior = 1960:1964,
-    time.optimize.ssr = 1965:1975,
-    unit.names.variable = 2,
-    time.plot = 1960:1990
-  )
-
-# fit training model
-synth.out <- synth(
-  data.prep.obj=dataprep.out,
-  Margin.ipop=.005,Sigf.ipop=7,Bound.ipop=6
-)
-
-
-# data prep for main model
-dataprep.out <-
-  dataprep(
-    foo = d,
-    predictors    = c("gdp","trade","infrate"),
-    dependent     = "gdp",
-    unit.variable = 1,
-    time.variable = 3,
-    special.predictors = list(
-      list("industry" ,1971:1975, c("mean")),
-      list("schooling",c(1970,1975), c("mean")),
-      list("invest70" ,1980, c("mean"))
-    ),
-    treatment.identifier = 7,
-    controls.identifier = unique(d$index)[-7],
-    time.predictors.prior = 1965:1975,
-    time.optimize.ssr = 1960:1975,
-    unit.names.variable = 2,
-    time.plot = 1960:1990
-  )
-
-# fit main model
-synth.out <- synth(
-  data.prep.obj=dataprep.out,
-  custom.v=as.numeric(synth.out$solution.v)
-)
-
-Cex.set <- 1
-#pdf(file = "2intimeplacebo1975.pdf", width = 5.5, height = 5.5, family = "Times",pointsize = 12)
-plot(1960:1990,dataprep.out$Y1plot,
-     type="l",ylim=c(0,33000),col="black",lty="solid",
-     ylab ="per-capita GDP (PPP, 2002 USD)",
-     xlab ="year",
-     xaxs = "i", yaxs = "i",
-     lwd=2
-)
-lines(1960:1990,(dataprep.out$Y0%*%synth.out$solution.w),col="black",lty="dashed",lwd=2)
-abline(v=1975,lty="dotted")
-legend(x="bottomright",
-       legend=c("West Germany","synthetic West Germany")
-       ,lty=c("solid","dashed"),col=c("black","black")
-       ,cex=.8,bg="white",lwd=c(2,2))
-arrows(1973,20000,1974.5,20000,col="black",length=.1)
-text(1967.5,20000,"placebo reunification",cex=Cex.set)
-
-
-
-
-###1980 reunification
-
-# data prep for training model
-dataprep.out.training <-
-  dataprep(
-    foo = d,
-    predictors    = c("gdp","trade","infrate"),
-    dependent     = "gdp",
-    unit.variable = 1,
-    time.variable = 3,
-    special.predictors = list(
-      list("industry",1971, c("mean")),
-      list("schooling",c(1960,1965), c("mean")),
-      list("invest60" ,1980, c("mean"))
-    ),
-    treatment.identifier = 7,
-    controls.identifier = unique(d$index)[-7],
-    time.predictors.prior = 1960:1964,
-    time.optimize.ssr = 1965:1975,
-    unit.names.variable = 2,
-    time.plot = 1960:1990
-  )
-
-# fit training model
-synth.out.training <- synth(
-  data.prep.obj=dataprep.out.training,
-  Margin.ipop=.005,Sigf.ipop=7,Bound.ipop=6
-)
-
-# data prep for main model
-dataprep.out <-
-  dataprep(
-    foo = d,
-    predictors    = c("gdp","trade","infrate"),
-    dependent     = "gdp",
-    unit.variable = 1,
-    time.variable = 3,
-    special.predictors = list(
-      list("industry" ,1971:1975, c("mean")),
-      list("schooling",c(1970,1975), c("mean")),
-      list("invest70" ,1980, c("mean"))
-    ),
-    treatment.identifier = 7,
-    controls.identifier = unique(d$index)[-7],
-    time.predictors.prior = 1975:1980,
-    time.optimize.ssr = 1960:1980,
-    unit.names.variable = 2,
-    time.plot = 1960:1990
-  )
-
-# fit main model
-synth.out <- synth(
-  data.prep.obj=dataprep.out,
-  custom.v=as.numeric(synth.out$solution.v)
-)
-
-Cex.set <- 1
-#pdf(file = "2intimeplacebo1975.pdf", width = 5.5, height = 5.5, family = "Times",pointsize = 12)
-plot(1960:1990,dataprep.out$Y1plot,
-     type="l",ylim=c(0,33000),col="black",lty="solid",
-     ylab ="per-capita GDP (PPP, 2002 USD)",
-     xlab ="year",
-     xaxs = "i", yaxs = "i",
-     lwd=2
-)
-lines(1960:1990,(dataprep.out$Y0%*%synth.out$solution.w),col="black",lty="dashed",lwd=2)
-abline(v=1980,lty="dotted")
-legend(x="bottomright",
-       legend=c("West Germany","synthetic West Germany")
-       ,lty=c("solid","dashed"),col=c("black","black")
-       ,cex=.8,bg="white",lwd=c(2,2))
-arrows(1978,20000,1979.5,20000,col="black",length=.1)
-text(1972.5,20000,"placebo reunification",cex=Cex.set)
-#dev.off()
-
-### Figure 5: Ratio of post-reunification RMSPE to pre-reunification RMSPE: West Germany and control countries.
+### Figure 4: Ratio of post-reunification RMSPE to pre-reunification RMSPE: West Germany and control countries.
 
 # loop across control units
 storegaps <- 
@@ -390,9 +235,157 @@ dotchart(sort(postloss/preloss),
          pch=19)
 #dev.off()
 
+#figure 5: Placebo In Time 1975 and 1980
+par(mfrow=c(1,2))
+
+###1975 reunification
+# data prep for training model
+dataprep.out <-
+  dataprep(
+    foo = d,
+    predictors    = c("gdp","trade","infrate"),
+    dependent     = "gdp",
+    unit.variable = 1,
+    time.variable = 3,
+    special.predictors = list(
+      list("industry",1971, c("mean")),
+      list("schooling",c(1960,1965), c("mean")),
+      list("invest60" ,1980, c("mean"))
+    ),
+    treatment.identifier = 7,
+    controls.identifier = unique(d$index)[-7],
+    time.predictors.prior = 1960:1964,
+    time.optimize.ssr = 1965:1975,
+    unit.names.variable = 2,
+    time.plot = 1960:1990
+  )
+
+# fit training model
+synth.out <- synth(
+  data.prep.obj=dataprep.out,
+  Margin.ipop=.005,Sigf.ipop=7,Bound.ipop=6
+)
 
 
+# data prep for main model
+dataprep.out <-
+  dataprep(
+    foo = d,
+    predictors    = c("gdp","trade","infrate"),
+    dependent     = "gdp",
+    unit.variable = 1,
+    time.variable = 3,
+    special.predictors = list(
+      list("industry" ,1971:1975, c("mean")),
+      list("schooling",c(1970,1975), c("mean")),
+      list("invest70" ,1980, c("mean"))
+    ),
+    treatment.identifier = 7,
+    controls.identifier = unique(d$index)[-7],
+    time.predictors.prior = 1965:1975,
+    time.optimize.ssr = 1960:1975,
+    unit.names.variable = 2,
+    time.plot = 1960:1990
+  )
 
+# fit main model
+synth.out <- synth(
+  data.prep.obj=dataprep.out,
+  custom.v=as.numeric(synth.out$solution.v)
+)
+
+Cex.set <- 1
+#pdf(file = "2intimeplacebo1975.pdf", width = 5.5, height = 5.5, family = "Times",pointsize = 12)
+plot(1960:1990,dataprep.out$Y1plot,
+     type="l",ylim=c(0,33000),col="black",lty="solid",
+     ylab ="per-capita GDP (PPP, 2002 USD)",
+     xlab ="year",
+     xaxs = "i", yaxs = "i",
+     lwd=2
+)
+lines(1960:1990,(dataprep.out$Y0%*%synth.out$solution.w),col="black",lty="dashed",lwd=2)
+abline(v=1975,lty="dotted")
+legend(x="bottomright",
+       legend=c("West Germany","synthetic West Germany")
+       ,lty=c("solid","dashed"),col=c("black","black")
+       ,cex=.8,bg="white",lwd=c(2,2))
+arrows(1973,20000,1974.5,20000,col="black",length=.1)
+text(1967.5,20000,"placebo reunification",cex=Cex.set)
+
+###1980 reunification
+
+# data prep for training model
+dataprep.out.training <-
+  dataprep(
+    foo = d,
+    predictors    = c("gdp","trade","infrate"),
+    dependent     = "gdp",
+    unit.variable = 1,
+    time.variable = 3,
+    special.predictors = list(
+      list("industry",1971, c("mean")),
+      list("schooling",c(1960,1965), c("mean")),
+      list("invest60" ,1980, c("mean"))
+    ),
+    treatment.identifier = 7,
+    controls.identifier = unique(d$index)[-7],
+    time.predictors.prior = 1960:1964,
+    time.optimize.ssr = 1965:1975,
+    unit.names.variable = 2,
+    time.plot = 1960:1990
+  )
+
+# fit training model
+synth.out.training <- synth(
+  data.prep.obj=dataprep.out.training,
+  Margin.ipop=.005,Sigf.ipop=7,Bound.ipop=6
+)
+
+# data prep for main model
+dataprep.out <-
+  dataprep(
+    foo = d,
+    predictors    = c("gdp","trade","infrate"),
+    dependent     = "gdp",
+    unit.variable = 1,
+    time.variable = 3,
+    special.predictors = list(
+      list("industry" ,1971:1975, c("mean")),
+      list("schooling",c(1970,1975), c("mean")),
+      list("invest70" ,1980, c("mean"))
+    ),
+    treatment.identifier = 7,
+    controls.identifier = unique(d$index)[-7],
+    time.predictors.prior = 1975:1980,
+    time.optimize.ssr = 1960:1980,
+    unit.names.variable = 2,
+    time.plot = 1960:1990
+  )
+
+# fit main model
+synth.out <- synth(
+  data.prep.obj=dataprep.out,
+  custom.v=as.numeric(synth.out$solution.v)
+)
+
+Cex.set <- 1
+#pdf(file = "2intimeplacebo1975.pdf", width = 5.5, height = 5.5, family = "Times",pointsize = 12)
+plot(1960:1990,dataprep.out$Y1plot,
+     type="l",ylim=c(0,33000),col="black",lty="solid",
+     ylab ="per-capita GDP (PPP, 2002 USD)",
+     xlab ="year",
+     xaxs = "i", yaxs = "i",
+     lwd=2
+)
+lines(1960:1990,(dataprep.out$Y0%*%synth.out$solution.w),col="black",lty="dashed",lwd=2)
+abline(v=1980,lty="dotted")
+legend(x="bottomright",
+       legend=c("West Germany","synthetic West Germany")
+       ,lty=c("solid","dashed"),col=c("black","black")
+       ,cex=.8,bg="white",lwd=c(2,2))
+arrows(1978,20000,1979.5,20000,col="black",length=.1)
+text(1972.5,20000,"placebo reunification",cex=Cex.set)
+#dev.off()
 
 ##################EXTENSION###################
 
